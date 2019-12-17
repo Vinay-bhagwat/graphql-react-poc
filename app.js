@@ -1,11 +1,40 @@
 const express = require('express');
 const bodyParser = require('body-parser')
+const graphqlHttp = require('express-graphql')
+const { buildSchema } = require('graphql')
 
 const app = express();
 
 app.use(bodyParser.json())
+app.use('/graphql', graphqlHttp({
+    schema: buildSchema(`
+    type RootQuery {
+        events: [String!]!
+    }
 
-app.get('/', (req, res, next) => {
-    res.status(200).send('Working API')
-})
+    type RootMutation {
+        createEvent(name:String): String
+    }
+
+    schema {
+        query: RootQuery
+        mutation: RootMutation
+    }
+    `),
+    rootValue: {
+        events: () => {
+            return ['Cooking', 'Sailing', 'All-n8 coding']
+        },
+        createEvent: (args) => {
+            const eventName = args.name
+            return eventName
+        },
+        // updateEvent,
+        // deleteEvent
+    },
+    graphiql: true
+
+
+}))
+
 app.listen(3000);
