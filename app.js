@@ -29,8 +29,6 @@ app.use('/graphql', graphqlHttp({
             const eventName = args.name
             return eventName
         },
-        // updateEvent,
-        // deleteEvent
     },
     graphiql: true
 
